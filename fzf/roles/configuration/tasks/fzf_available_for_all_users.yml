@@ -1,0 +1,6 @@
+- name: Add fzf configuration for all users to /etc/profile
+  ansible.builtin.lineinfile:
+    path: /etc/profile
+    line: '[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh'
+    state: present
+    create: yes

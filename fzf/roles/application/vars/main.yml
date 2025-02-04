@@ -1,0 +1,4 @@
+---
+repo_url: https://github.com/junegunn/fzf.git 
+install_command: "/home/ec2-user/ansible-project/.fzf/install --all"
+shell: /bin/bash

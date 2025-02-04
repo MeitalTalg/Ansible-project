@@ -1,0 +1,27 @@
+- name: Install Git
+  dnf:
+    name: git
+    state: latest
+
+
+- name: Clone a repo with separate git directory
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_directory }}"
+    clone: yes
+    update: yes
+
+- name: Run fzf install script from the correct directory
+  ansible.builtin.shell: "bash {{ install_command }}"
+  args:
+    chdir: "{{ app_directory }}"
+    executable: /bin/bash
+
+- name: Add fzf to PATH
+  ansible.builtin.lineinfile:
+    path: /home/ec2-user/.bashrc
+    line: 'export PATH=/home/ec2-user/ansible-project/.fzf/bin:$PATH'
+    create: yes
+
+- name: Reload bashrc
+  ansible.builtin.shell: "source /home/ec2-user/.bashrc"

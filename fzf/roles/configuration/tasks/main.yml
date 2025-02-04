@@ -1,0 +1,9 @@
+- name: Include user permissions tasks
+  ansible.builtin.import_tasks: user_permission.yml
+
+- name: Include user permissions tasks
+  ansible.builtin.import_tasks: fzf_available_for_all_users.yml
+
+- name: Reboot machine and send a message
+  ansible.builtin.reboot:
+    msg: "Rebooting machine in 5 seconds"

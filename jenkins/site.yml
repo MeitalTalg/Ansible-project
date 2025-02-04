@@ -1,0 +1,24 @@
+---
+- name: Gather EC2 public IP addresses
+  hosts: aws_ec2
+  become: true
+  gather_facts: yes
+  tasks:
+    - name: Show EC2 public IP from hostvars
+      ansible.builtin.debug:
+        msg: "{{ hostvars[inventory_hostname]['public_ip_address'] }}"
+
+- name: Set up jenkins server
+  hosts: instance__Jenkins
+  become: true
+  roles:
+    - jenkins
+
+- name: Set up web server
+  hosts: instance__Web
+  become: true
+  roles:
+    - role: web
+      vars: 
+        web_user: ec2-user
+

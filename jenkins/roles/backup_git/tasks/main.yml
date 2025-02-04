@@ -1,0 +1,12 @@
+---
+- name: install rsync
+  package:
+    name: rsync
+    state: present
+
+- name: backup git local repo
+  synchronize:
+    src: "/opt/git_repos/"
+    dest: "/backup/git_repos/"
+    archive: yes
+    delete: yes

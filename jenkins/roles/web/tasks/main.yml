@@ -1,0 +1,44 @@
+---
+- name: Install nginx, git, java and docker
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - nginx
+    - java
+    - docker
+    - git
+
+- name: Enable and start Nginx, java and docker
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - nginx
+    - docker
+
+- name: Add ec2-user to Docker group
+  ansible.builtin.user:
+    name: ec2-user
+    groups: docker
+    append: true
+
+- name: Verify Docker group membership
+  ansible.builtin.command: id ec2-user
+  register: user_groups
+
+- debug:
+    var: user_groups.stdout
+
+- name: Apply new group without logout
+  ansible.builtin.shell: sg docker -c "echo 'Docker group applied'"
+  become_user: ec2-user
+
+- name: Add Jenkins public key to Web server
+  authorized_key:
+    user: "ec2-user"
+    state: present
+    key: "{{ hostvars[groups['instance__Jenkins'][0]]['jenkins_pub_key_content'] }}"
+  
+

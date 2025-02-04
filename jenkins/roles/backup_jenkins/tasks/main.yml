@@ -1,0 +1,25 @@
+---
+- name: Install rsync
+  package:
+    name: rsync
+    state: present
+
+- name: Backup Jenkins jobs directory with rsync
+  synchronize:
+    src: "/var/lib/jenkins/jobs/"
+    dest: "/backup/jenkins/jobs/"
+    archive: yes
+    delete: yes
+
+- name: Backup Jenkins workspace directory with rsync
+  synchronize:
+    src: "/var/lib/jenkins/workspace/"
+    dest: "/backup/jenkins/workspace/"
+    archive: yes
+    delete: yes
+
+- name: Backup Jenkins configuration files
+  synchronize:
+    src: "/var/lib/jenkins/config.xml"
+    dest: "/backup/jenkins/config.xml"
+    archive: yes

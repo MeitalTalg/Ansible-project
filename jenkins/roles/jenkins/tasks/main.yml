@@ -1,0 +1,46 @@
+- name: Download Jenkins repository file
+  get_url:
+    url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    dest: /etc/yum.repos.d/jenkins.repo
+
+- name: Import Jenkins-CI key
+  rpm_key:
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    state: present
+
+- name: Install Java
+  yum:
+    name: java-17-amazon-corretto
+    state: latest
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    state: latest
+
+- name: Start Jenkins service
+  service:
+    name: jenkins
+    state: started
+
+- name: Generate SSH key
+  openssh_keypair:
+    path: "/home/ec2-user/.ssh/id_rsa"
+    type: rsa
+    size: 4096
+    mode: '0400'
+    owner: ec2-user
+    group: ec2-user
+  register: ssh_key
+
+- name: Read public key from Jenkins
+  slurp:
+    src: "/home/ec2-user/.ssh/id_rsa.pub"
+  register: jenkins_pub_key
+
+- name: Share Jenkins public key with all hosts
+  set_fact:
+    jenkins_pub_key_content: "{{ jenkins_pub_key['content'] | b64decode }}"
+  run_once: true
+  
+
